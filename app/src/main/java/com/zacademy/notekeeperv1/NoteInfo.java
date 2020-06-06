@@ -3,10 +3,11 @@ package com.zacademy.notekeeperv1;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public final class NoteInfo {
+public final class NoteInfo implements Parcelable {
     private CourseInfo mCourse;
     private String mTitle;
     private String mText;
+
 
     public NoteInfo(CourseInfo course, String title, String text) {
         mCourse = course;
@@ -60,6 +61,39 @@ public final class NoteInfo {
     @Override
     public String toString() {
         return getCompareKey();
+    }
+
+    /**
+     * Methods inherited from Parcelable interface
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(mCourse, flags);
+        dest.writeString(mTitle);
+        dest.writeString(mText);
+    }
+
+    public static final Parcelable.Creator<NoteInfo> CREATOR = new Parcelable.Creator<NoteInfo>() {
+        @Override
+        public NoteInfo createFromParcel(Parcel in) {
+            return new NoteInfo(in);
+        }
+
+        @Override
+        public NoteInfo[] newArray(int size) {
+            return new NoteInfo[size];
+        }
+    }; //Creator field
+
+    protected NoteInfo(Parcel in) {
+        mCourse = in.readParcelable(CourseInfo.class.getClassLoader());
+        mTitle = in.readString();
+        mText = in.readString();
     }
 
 }

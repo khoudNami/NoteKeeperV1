@@ -19,6 +19,8 @@ import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
 
+    public static final String NOTE_INFO ="com.zacademy.notekeeperv1.NOTE_INFO" ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
