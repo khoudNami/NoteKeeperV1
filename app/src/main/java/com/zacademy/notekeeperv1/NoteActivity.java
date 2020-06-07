@@ -3,13 +3,8 @@ package com.zacademy.notekeeperv1;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
-import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,7 +41,7 @@ public class NoteActivity extends AppCompatActivity {
         EditText textNoteText = findViewById(R.id.text_note_text);
 
         //use intent extra values capture by readDisplayState, to display the note;
-        displayNotes(spinnerCourses, textNoteTitle, textNoteText);
+        displayNote(spinnerCourses, textNoteTitle, textNoteText);
     }
 
 
@@ -55,7 +50,7 @@ public class NoteActivity extends AppCompatActivity {
         mNote = intent.getParcelableExtra(NOTE_INFO); //make it member variable so that displayNotes() can also access it
     }
 
-    private void displayNotes(Spinner spinnerCourses, EditText textNoteTitle, EditText textNoteText) {
+    private void displayNote(Spinner spinnerCourses, EditText textNoteTitle, EditText textNoteText) {
 
         List<CourseInfo> courses = DataManager.getInstance().getCourses();
         int courseIndex = courses.indexOf(mNote.getCourse()); // get the reference of the CourseInfo object in this NoteInfo. get the index of that CourseInfo object in the courses List
