@@ -30,8 +30,7 @@ public class NoteListActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivity(new Intent(NoteListActivity.this, NoteActivity.class));
             }
         });
 
@@ -50,13 +49,12 @@ public class NoteListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(NoteListActivity.this, NoteActivity.class);
-
-                //NoteInfo note = (NoteInfo) listNotes.getItemAtPosition(position);
-                NoteInfo note = (NoteInfo) parent.getItemAtPosition(position);
-                Toast.makeText(NoteListActivity.this, "" + note, Toast.LENGTH_LONG).show();
-                intent.putExtra(NoteActivity.NOTE_INFO, note);
+                intent.putExtra(NoteActivity.NOTE_POSITION, position);
+                Toast.makeText(NoteListActivity.this, "Position of selected listView item passed in the intent: " + position, Toast.LENGTH_LONG).show();
                 startActivity(intent);
 
+//                NoteInfo note = (NoteInfo) parent.getItemAtPosition(position);
+//                intent.putExtra(NoteActivity.NOTE_POSITION, note);
             }
         });
     }

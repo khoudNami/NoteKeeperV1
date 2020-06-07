@@ -16,8 +16,11 @@ import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
 
-    public static final String NOTE_INFO = "com.zacademy.notekeeperv1.NOTE_INFO";
+    //public static final String NOTE_INFO = "com.zacademy.notekeeperv1.NOTE_INFO";
+    public static final String NOTE_POSITION = "com.zacademy.notekeeperv1.NOTE_INFO_POSITION";
+    public static final int POSITION_NOT_SET = -1;
     private NoteInfo mNote;
+    private boolean mIsNewNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,20 +43,27 @@ public class NoteActivity extends AppCompatActivity {
         EditText textNoteTitle = findViewById(R.id.text_note_title);
         EditText textNoteText = findViewById(R.id.text_note_text);
 
+
         //use intent extra values capture by readDisplayState, to display the note;
-        displayNote(spinnerCourses, textNoteTitle, textNoteText);
+        if (!mIsNewNote) {
+            displayNote(spinnerCourses, textNoteTitle, textNoteText);
+        }
     }
 
 
     private void readDisplayStateValues() {
         Intent intent = getIntent();
-        mNote = intent.getParcelableExtra(NOTE_INFO); //make it member variable so that displayNotes() can also access it
+        int position = intent.getIntExtra(NOTE_POSITION, POSITION_NOT_SET); //make it member variable so that displayNotes() can also access it
+        mIsNewNote = position == POSITION_NOT_SET;
+        if (!mIsNewNote) {
+            mNote = DataManager.getInstance().getNotes().get(position);
+        }
     }
 
     private void displayNote(Spinner spinnerCourses, EditText textNoteTitle, EditText textNoteText) {
 
         List<CourseInfo> courses = DataManager.getInstance().getCourses();
-        int courseIndex = courses.indexOf(mNote.getCourse()); // get the reference of the CourseInfo object in this NoteInfo. get the index of that CourseInfo object in the courses List
+        int courseIndex = courses.indexOf(mNote.getCourse()); // get the reference of the CourseInfo object in this NoteInfo from intent.getParcelableExtra(NOTE_INFO). get the index of that CourseInfo object in the courses List
         spinnerCourses.setSelection(courseIndex); //use that index to set the current selection  in the spinnerCourses spinner
 
         textNoteTitle.setText(mNote.getTitle());
