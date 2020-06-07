@@ -4,9 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public final class NoteInfo implements Parcelable {
-    private CourseInfo mCourse;
-    private String mTitle;
-    private String mText;
+    private CourseInfo mCourse;// has mCourseId, course_mTitle, list of mModules in course
+    private String mTitle;//Note title
+    private String mText;//Note text
 
 
     public NoteInfo(CourseInfo course, String title, String text) {

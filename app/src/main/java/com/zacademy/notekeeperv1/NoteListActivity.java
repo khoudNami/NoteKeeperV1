@@ -35,14 +35,15 @@ public class NoteListActivity extends AppCompatActivity {
             }
         });
 
-        initializeDisplayContent(); //populate ListView list_notes with CourseName + NoteTitle
+        initializeDisplayContent(); //populate ListView list_notes with NoteInfo.mCourse.getCourseId + "|" + mTitle + "|" + mText where mTitle is note title and mText is note text
+
 
     }
 
     private void initializeDisplayContent() {
         final ListView listNotes = findViewById(R.id.list_notes);
         List<NoteInfo> notes = DataManager.getInstance().getNotes();
-        ArrayAdapter<NoteInfo> adapterNotes = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, notes);
+        ArrayAdapter<NoteInfo> adapterNotes = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, notes);//list values read in by NoteInfo.toString()
         listNotes.setAdapter(adapterNotes);
 
         listNotes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
