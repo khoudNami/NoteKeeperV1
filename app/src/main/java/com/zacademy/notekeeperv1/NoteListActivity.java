@@ -49,7 +49,7 @@ public class NoteListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(NoteListActivity.this, NoteActivity.class);
-                intent.putExtra(NoteActivity.NOTE_POSITION, position);
+                intent.putExtra(NoteActivity.NOTE_POSITION, position);//pass the position of selected item, instead of Parcelable NoteInfo object
                 Toast.makeText(NoteListActivity.this, "Position of selected listView item passed in the intent: " + position, Toast.LENGTH_LONG).show();
                 startActivity(intent);
 
