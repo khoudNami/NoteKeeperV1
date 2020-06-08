@@ -7,6 +7,7 @@ public class DataManager {
     private static DataManager ourInstance = null;
 
     private List<CourseInfo> mCourses = new ArrayList<>();
+
     private List<NoteInfo> mNotes = new ArrayList<>();
 
     public static DataManager getInstance() {
