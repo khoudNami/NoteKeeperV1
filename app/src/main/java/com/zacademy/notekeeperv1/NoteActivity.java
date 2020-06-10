@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.Menu;
@@ -29,6 +30,7 @@ public class NoteActivity extends AppCompatActivity {
     private EditText mTextNoteText;
     private int mNewNotePosition;
     private boolean mIsCancelling;
+    private NoteActivityViewModel mViewModel;
 
 
     /************************************** Overrided Methods *************************************/
@@ -40,11 +42,17 @@ public class NoteActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        ViewModelProvider viewModelProvider = new ViewModelProvider(getViewModelStore(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()));
+        mViewModel = viewModelProvider.get(NoteActivityViewModel.class);
+
         mSpinnerCourses = findViewById(R.id.spinner_courses);
         List<CourseInfo> courses = DataManager.getInstance().getCourses();
 
         //Create adapter to associate courses list with spinnerCourses Spinner.
-        ArrayAdapter<CourseInfo> adapterCourses = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, courses);//list values read in by CourseInfo.toString()
+        ArrayAdapter<CourseInfo> adapterCourses = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item,
+                courses);//list values read in by CourseInfo.toString()
         adapterCourses.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinnerCourses.setAdapter(adapterCourses);
 
