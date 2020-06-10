@@ -166,7 +166,7 @@ public class NoteActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void saveNote() {
+    private void saveNote() { // set the values of the note we currently have reference to
         mNote.setCourse((CourseInfo) mSpinnerCourses.getSelectedItem());
         mNote.setTitle(mTextNoteTitle.getText().toString());
         mNote.setText(mTextNoteText.getText().toString());
