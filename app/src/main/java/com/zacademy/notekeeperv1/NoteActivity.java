@@ -29,9 +29,7 @@ public class NoteActivity extends AppCompatActivity {
     private EditText mTextNoteText;
     private int mNewNotePosition;
     private boolean mIsCancelling;
-    private String mOriginalNoteCourseId;
-    private String mOriginalNoteTitle;
-    private String mOriginalNoteText;
+
 
     /************************************** Overrided Methods *************************************/
 
@@ -65,7 +63,6 @@ public class NoteActivity extends AppCompatActivity {
         }
         Log.d("CALLED", "NoteActivity onCreate() called");
     }
-
 
     @Override
     protected void onStart() {
