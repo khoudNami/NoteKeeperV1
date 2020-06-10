@@ -29,6 +29,9 @@ public class NoteActivity extends AppCompatActivity {
     private EditText mTextNoteText;
     private int mNewNotePosition;
     private boolean mIsCancelling;
+    private String mOriginalNoteCourseId;
+    private String mOriginalNoteTitle;
+    private String mOriginalNoteText;
 
     /************************************** Overrided Methods *************************************/
 
@@ -49,6 +52,8 @@ public class NoteActivity extends AppCompatActivity {
 
         //Receive Intent from NoteListActivity; extract its extra; use the extra(Parcelable, then later position) to display the selected note from NoteListActivity in NoteActivity
         readDisplayStateValues();
+        saveOriginalNoteValues();
+
 
         mTextNoteTitle = findViewById(R.id.text_note_title);
         mTextNoteText = findViewById(R.id.text_note_text);
@@ -58,50 +63,55 @@ public class NoteActivity extends AppCompatActivity {
         if (!mIsNewNote) {
             displayNote(mSpinnerCourses, mTextNoteTitle, mTextNoteText);
         }
-        Log.d("CALLED","NoteActivity onCreate() called");
+        Log.d("CALLED", "NoteActivity onCreate() called");
     }
+
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d("CALLED","NoteActivity onStart() called");
+        Log.d("CALLED", "NoteActivity onStart() called");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("CALLED","NoteActivity onResume() called");
+        Log.d("CALLED", "NoteActivity onResume() called");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         if (mIsCancelling) {
-            if(mIsNewNote)
+            if (mIsNewNote) {
                 DataManager.getInstance().removeNote(mNewNotePosition);
+            } else {
+                storePreviousNoteValues();
+            }
+
         } else {
             saveNote();
         }
 
-        Log.d("CALLED","NoteActivity onPause() called");
+        Log.d("CALLED", "NoteActivity onPause() called");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("CALLED","NoteActivity onStop() called");
+        Log.d("CALLED", "NoteActivity onStop() called");
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.d("CALLED","NoteActivity onRestart() called");
+        Log.d("CALLED", "NoteActivity onRestart() called");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("CALLED","NoteActivity onDestroy() called");
+        Log.d("CALLED", "NoteActivity onDestroy() called");
     }
 
     @Override
@@ -177,5 +187,22 @@ public class NoteActivity extends AppCompatActivity {
         mNewNotePosition = dm.createNewNote();
         mNote = dm.getNotes().get(mNewNotePosition);
     }
+
+    private void saveOriginalNoteValues() {
+        if (mIsNewNote)
+            return;
+        mOriginalNoteCourseId = mNote.getCourse().getCourseId();
+        mOriginalNoteTitle = mNote.getTitle();
+        mOriginalNoteText = mNote.getText();
+
+    }
+
+    private void storePreviousNoteValues() {
+        CourseInfo course = DataManager.getInstance().getCourse(mOriginalNoteCourseId);
+        mNote.setCourse(course);
+        mNote.setTitle(mOriginalNoteTitle);
+        mNote.setText(mOriginalNoteText);
+    }
+
 
 }
