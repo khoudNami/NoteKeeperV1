@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-android {
+android {//general settings for building this module, that is the app module
     compileSdkVersion 29
 
     defaultConfig {
@@ -22,11 +22,17 @@ android {
 }
 
 dependencies {
+    /**Associating Dependencies*********/
+//    Dependency for all build variants
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+/*   Dependency for JVM test*/
     testImplementation 'junit:junit:4.12'
+
+/*  Dependency for Instrumentation test*/
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
