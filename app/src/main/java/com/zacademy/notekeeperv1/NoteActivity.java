@@ -205,7 +205,7 @@ public class NoteActivity extends AppCompatActivity {
 
     private void createNewNote() {
         DataManager dm = DataManager.getInstance();
-        mNewNotePosition = dm.createNewNote();
+        mNewNotePosition =  dm.createNewNote();
 //        mNote = dm.getNotes().get(mNewNotePosition);
     }
 
