@@ -166,13 +166,14 @@ public class NoteActivity extends AppCompatActivity {
 
     private void readDisplayStateValues() {
         Intent intent = getIntent();
-        int position = intent.getIntExtra(NOTE_POSITION, POSITION_NOT_SET);
-        mIsNewNote = position == POSITION_NOT_SET;
+        mNewNotePosition = intent.getIntExtra(NOTE_POSITION, POSITION_NOT_SET);
+        mIsNewNote = mNewNotePosition == POSITION_NOT_SET;
         if (mIsNewNote) {
             createNewNote();
-        } else {
-            mNote = DataManager.getInstance().getNotes().get(position);//make it member variable so that displayNotes() can also access it// List.get(position): Returns the element at the specified position in this list.
         }
+
+            mNote = DataManager.getInstance().getNotes().get(mNewNotePosition);//make it member variable so that displayNotes() can also access it// List.get(position): Returns the element at the specified position in this list.
+
     }
 
     private void displayNote(Spinner spinnerCourses, EditText textNoteTitle, EditText textNoteText) {
@@ -205,7 +206,7 @@ public class NoteActivity extends AppCompatActivity {
     private void createNewNote() {
         DataManager dm = DataManager.getInstance();
         mNewNotePosition = dm.createNewNote();
-        mNote = dm.getNotes().get(mNewNotePosition);
+//        mNote = dm.getNotes().get(mNewNotePosition);
     }
 
     private void saveOriginalNoteValues() {
