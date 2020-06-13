@@ -22,6 +22,7 @@ public class NoteActivity extends AppCompatActivity {
 
     /************************************** Fields ************************************************/
 
+    private final String TAG = getClass().getSimpleName();
     public static final String NOTE_POSITION = "com.zacademy.notekeeperv1.NOTE_INFO_POSITION";
     public static final int POSITION_NOT_SET = -1;
     private NoteInfo mNote;
@@ -32,7 +33,6 @@ public class NoteActivity extends AppCompatActivity {
     private int mNewNotePosition;
     private boolean mIsCancelling;
     private NoteActivityViewModel mViewModel;
-
 
     /************************************** Overrided Methods *************************************/
 
@@ -76,25 +76,26 @@ public class NoteActivity extends AppCompatActivity {
         if (!mIsNewNote) {
             displayNote(mSpinnerCourses, mTextNoteTitle, mTextNoteText);
         }
-        Log.d("CALLED", "NoteActivity onCreate() called");
+        Log.d(TAG, "NoteActivity onCreate() called");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d("CALLED", "NoteActivity onStart() called");
+//        Log.d("CALLED", "NoteActivity onStart() called");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("CALLED", "NoteActivity onResume() called");
+//        Log.d("CALLED", "NoteActivity onResume() called");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         if (mIsCancelling) {
+            Log.i(TAG, "Cancelling note at position: " + mNewNotePosition);
             if (mIsNewNote) {
                 DataManager.getInstance().removeNote(mNewNotePosition);
             } else {
@@ -105,25 +106,25 @@ public class NoteActivity extends AppCompatActivity {
             saveNote();
         }
 
-        Log.d("CALLED", "NoteActivity onPause() called");
+        Log.d(TAG, "NoteActivity onPause() called");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("CALLED", "NoteActivity onStop() called");
+//        Log.d("CALLED", "NoteActivity onStop() called");
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.d("CALLED", "NoteActivity onRestart() called");
+//        Log.d("CALLED", "NoteActivity onRestart() called");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("CALLED", "NoteActivity onDestroy() called");
+//        Log.d("CALLED", "NoteActivity onDestroy() called");
     }
 
     @Override
@@ -172,7 +173,8 @@ public class NoteActivity extends AppCompatActivity {
             createNewNote();
         }
 
-            mNote = DataManager.getInstance().getNotes().get(mNewNotePosition);//make it member variable so that displayNotes() can also access it// List.get(position): Returns the element at the specified position in this list.
+        Log.i(TAG, "mNoteNewPosition: " + mNewNotePosition);
+        mNote = DataManager.getInstance().getNotes().get(mNewNotePosition);//make it member variable so that displayNotes() can also access it// List.get(position): Returns the element at the specified position in this list.
 
     }
 
@@ -205,7 +207,7 @@ public class NoteActivity extends AppCompatActivity {
 
     private void createNewNote() {
         DataManager dm = DataManager.getInstance();
-        mNewNotePosition =  dm.createNewNote();
+        mNewNotePosition = dm.createNewNote();
 //        mNote = dm.getNotes().get(mNewNotePosition);
     }
 
