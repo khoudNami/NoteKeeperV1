@@ -20,7 +20,7 @@ public class DataManager {
     }
 
     public String getCurrentUserName() {
-        return "Jim Wilson";
+        return "Jim Wilso6n";
     }
 
     public String getCurrentUserEmail() {
