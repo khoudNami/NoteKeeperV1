@@ -11,7 +11,7 @@ public class DataManager {
     private List<NoteInfo> mNotes = new ArrayList<>();
 
     public static DataManager getInstance() {
-        if(ourInstance == null) {
+        if (ourInstance == null) {
             ourInstance = new DataManager();
             ourInstance.initializeCourses();
             ourInstance.initializeExampleNotes();
@@ -34,12 +34,12 @@ public class DataManager {
     public int createNewNote() {
         NoteInfo note = new NoteInfo(null, null, null);
         mNotes.add(note);
-        return mNotes.size()-1;
+        return mNotes.size() - 1;
     }
 
     public int findNote(NoteInfo note) {
-        for(int index = 0; index < mNotes.size(); index++) {
-            if(note.equals(mNotes.get(index)))
+        for (int index = 0; index < mNotes.size(); index++) {
+            if (note.equals(mNotes.get(index)))
                 return index;
         }
 
@@ -64,8 +64,8 @@ public class DataManager {
 
     public List<NoteInfo> getNotes(CourseInfo course) {
         ArrayList<NoteInfo> notes = new ArrayList<>();
-        for(NoteInfo note:mNotes) {
-            if(course.equals(note.getCourse()))
+        for (NoteInfo note : mNotes) {
+            if (course.equals(note.getCourse()))
                 notes.add(note);
         }
         return notes;
@@ -73,8 +73,8 @@ public class DataManager {
 
     public int getNoteCount(CourseInfo course) {
         int count = 0;
-        for(NoteInfo note:mNotes) {
-            if(course.equals(note.getCourse()))
+        for (NoteInfo note : mNotes) {
+            if (course.equals(note.getCourse()))
                 count++;
         }
         return count;
@@ -189,6 +189,16 @@ public class DataManager {
         modules.add(new ModuleInfo("java_core_m10", "Persisting Objects with Serialization"));
 
         return new CourseInfo("java_core", "Java Fundamentals: The Core Platform", modules);
+    }
+
+    public int createNewNote(CourseInfo course, String noteTitle, String noteText) {
+        int index = createNewNote();
+        NoteInfo note = getNotes().get(index);
+        note.setCourse(course);
+        note.setTitle(noteTitle);
+        note.setText(noteText);
+
+        return index;
     }
     //endregion
 
