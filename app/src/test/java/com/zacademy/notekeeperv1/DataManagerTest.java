@@ -1,15 +1,25 @@
 package com.zacademy.notekeeperv1;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class DataManagerTest {
+
     /**
-     * We are testing if if our notes have same course, same titles, but different bodies; if findNotes()
-     * method returns the correct results. Therefore just testing the edge case to make sure we find
-     * the correct note when two notes are similar.
+     * to ensure that each test runs in a consistent state. in this case make sure that the list
+     * of notes always starts in a consistent state
      */
+    @Before
+    public void setUp() {
+        DataManager dm = DataManager.getInstance();
+        dm.getNotes().clear();
+        dm.initializeExampleNotes();// each test starts with exactly the same set of notes, whether
+        //it runs by itself or together with all others in its class
+
+    }
+
     @Test
     public void createNewNote() {
         DataManager dm = DataManager.getInstance();
@@ -32,6 +42,12 @@ public class DataManagerTest {
         assertEquals(noteText, compareNote.getText());
 
     }
+
+    /**
+     * We are testing if if our notes have same course, same titles, but different bodies; if findNotes()
+     * method returns the correct results. Therefore just testing the edge case to make sure we find
+     * the correct note when two notes are similar.
+     */
 
     @Test
     public void findSimilarNotes() {
