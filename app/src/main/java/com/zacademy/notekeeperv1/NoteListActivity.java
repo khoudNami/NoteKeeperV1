@@ -8,6 +8,8 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,7 +22,7 @@ import java.util.List;
 public class NoteListActivity extends AppCompatActivity {
 
 
-    private ArrayAdapter<NoteInfo> mAdapterNotes;
+//    private ArrayAdapter<NoteInfo> mAdapterNotes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,23 +47,27 @@ public class NoteListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mAdapterNotes.notifyDataSetChanged();
+//        mAdapterNotes.notifyDataSetChanged();
     }
 
     private void initializeDisplayContent() {
-        final ListView listNotes = findViewById(R.id.list_notes);
-        List<NoteInfo> notes = DataManager.getInstance().getNotes();
-        mAdapterNotes = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, notes);
-        listNotes.setAdapter(mAdapterNotes);
+//        final ListView listNotes = findViewById(R.id.list_notes);
+//        List<NoteInfo> notes = DataManager.getInstance().getNotes();
+//        mAdapterNotes = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, notes);
+//        listNotes.setAdapter(mAdapterNotes);
+//
+//        listNotes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Intent intent = new Intent(NoteListActivity.this, NoteActivity.class);
+//                intent.putExtra(NoteActivity.NOTE_POSITION, position);//pass the position of selected item, instead of Parcelable NoteInfo object
+//                Toast.makeText(NoteListActivity.this, "Position of selected listView item passed in the intent: " + position, Toast.LENGTH_LONG).show();
+//                startActivity(intent);
+//            }
+//        });
 
-        listNotes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(NoteListActivity.this, NoteActivity.class);
-                intent.putExtra(NoteActivity.NOTE_POSITION, position);//pass the position of selected item, instead of Parcelable NoteInfo object
-                Toast.makeText(NoteListActivity.this, "Position of selected listView item passed in the intent: " + position, Toast.LENGTH_LONG).show();
-                startActivity(intent);
-            }
-        });
+        final RecyclerView recyclerNotes = findViewById(R.id.list_notes);
+        final LinearLayoutManager notesLayoutManager = new LinearLayoutManager(this);
+        recyclerNotes.setLayoutManager(notesLayoutManager);
     }
 }
