@@ -94,7 +94,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, NoteActivity.class);
-                    intent.putExtra(NoteActivity.NOTE_POSITION, getLayoutPosition());
+                    intent.putExtra(NoteActivity.NOTE_POSITION, mCurrentPosition);
                     mContext.startActivity(intent);
 
                 }
@@ -113,7 +113,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(mContext,
-                            "Clicked: " + getLayoutPosition() + "th item: " + mTextTitle.getText().toString(),
+                            "Clicked: " + getAdapterPosition() + "th item: " + mTextTitle.getText().toString(),
                             Toast.LENGTH_SHORT).show();
                 }
             });
