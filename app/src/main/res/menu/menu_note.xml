@@ -4,10 +4,19 @@
     tools:context="com.zacademy.notekeeperv1.NoteActivity">
     <item
         android:id="@+id/action_send_mail"
-        android:orderInCategory="100"
+        android:orderInCategory="30"
         android:title="Send as email"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_next"
+        android:icon="@android:drawable/ic_media_next"
+        android:orderInCategory="20"
+        android:title="Next"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_cancel"
-        android:title="Cancel" />
+        android:icon="@android:drawable/ic_menu_revert"
+        android:orderInCategory="10"
+        android:title="Cancel"
+        app:showAsAction="ifRoom" />
 </menu>
