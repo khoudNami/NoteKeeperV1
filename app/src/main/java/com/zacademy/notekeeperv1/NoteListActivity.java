@@ -20,7 +20,6 @@ public class NoteListActivity extends AppCompatActivity {
     private NoteRecyclerAdapter mNoteRecyclerAdapter;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
