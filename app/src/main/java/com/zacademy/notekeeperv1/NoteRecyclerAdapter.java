@@ -99,24 +99,24 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
                 }
             });
-
-            mTextCourse.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(mContext,
-                            "Clicked: " + getLayoutPosition() + "th item: " + mTextCourse.getText().toString(),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            mTextTitle.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(mContext,
-                            "Clicked: " + getAdapterPosition() + "th item: " + mTextTitle.getText().toString(),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
+//
+//            mTextCourse.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Toast.makeText(mContext,
+//                            "Clicked: " + getLayoutPosition() + "th item: " + mTextCourse.getText().toString(),
+//                            Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//
+//            mTextTitle.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Toast.makeText(mContext,
+//                            "Clicked: " + getAdapterPosition() + "th item: " + mTextTitle.getText().toString(),
+//                            Toast.LENGTH_SHORT).show();
+//                }
+//            });
 
 
         }
