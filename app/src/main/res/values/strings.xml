@@ -25,4 +25,6 @@
     <string name="note_text_hint">Note Text</string>
     <string name="nav_share_message">Share</string>
     <string name="nav_send_message">Send</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
 </resources>

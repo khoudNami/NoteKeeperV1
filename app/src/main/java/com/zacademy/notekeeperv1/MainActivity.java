@@ -13,7 +13,7 @@ import com.google.android.material.navigation.NavigationView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
-import androidx.navigation.ui.AppBarConfiguration;
+//import androidx.navigation.ui.AppBarConfiguration;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private NoteRecyclerAdapter mNoteRecyclerAdapter;
 
-    private AppBarConfiguration mAppBarConfiguration;
+//    private AppBarConfiguration mAppBarConfiguration;
     private RecyclerView mRecyclerItems;
     private LinearLayoutManager mNotesLayoutManager;
     private CourseRecyclerAdapter mCourseRecyclerAdapter;
@@ -104,6 +104,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         menu.findItem(id).setChecked(true);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if(id==R.id.action_settings){
+//            startActivity(new Intent(this,SettingsActivity.class));
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void displayCourses() {
         mRecyclerItems.setLayoutManager(mCoursesLayoutManager);
         mRecyclerItems.setAdapter(mCourseRecyclerAdapter);
@@ -150,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
 
-
         return true;
     }
 
@@ -159,6 +167,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Snackbar.make(view, message_id, Snackbar.LENGTH_LONG).show();
 
     }
-
 
 }
