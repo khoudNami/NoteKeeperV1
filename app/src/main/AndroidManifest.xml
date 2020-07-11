@@ -10,6 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:parentActivityName=".MainActivity"
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"></activity>
         <activity

@@ -103,6 +103,7 @@ public class SettingsActivity extends AppCompatActivity implements
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.general_preferences, rootKey);
 
+
         }
     }
 }
