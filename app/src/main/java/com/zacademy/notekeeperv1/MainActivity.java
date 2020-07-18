@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private NoteRecyclerAdapter mNoteRecyclerAdapter;
 
-//    private AppBarConfiguration mAppBarConfiguration;
+    //    private AppBarConfiguration mAppBarConfiguration;
     private RecyclerView mRecyclerItems;
     private LinearLayoutManager mNotesLayoutManager;
     private CourseRecyclerAdapter mCourseRecyclerAdapter;
@@ -90,8 +90,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        String userName = sharedPreferences.getString("user_display_name","Defalt");
-        String emailAddress = sharedPreferences.getString("user_display_email","Defalt2");
+        String userName = sharedPreferences.getString("user_display_name", "Defalt");
+        String emailAddress = sharedPreferences.getString("user_display_email", "Defalt2");
 
         Toast.makeText(this, userName, Toast.LENGTH_SHORT).show();
         Toast.makeText(this, emailAddress, Toast.LENGTH_SHORT).show();
@@ -118,8 +118,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        String userName = sharedPreferences.getString("user_display_name","");
-        String emailAddress = sharedPreferences.getString("user_display_email","");
+        String userName = sharedPreferences.getString("user_display_name", "");
+        String emailAddress = sharedPreferences.getString("user_display_email", "");
 
         textUsername.setText(userName);
         textEmailAddress.setText(emailAddress);
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mRecyclerItems.setLayoutManager(mNotesLayoutManager);
         mRecyclerItems.setAdapter(mNoteRecyclerAdapter);
 
-       // SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();// gets reference to database, create it if it dont exist, can be expensive and long running.
+        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase(); // gets reference to database, create it if it dont exist, can be expensive and long running.
 
         selectNavigationMenuItem(R.id.nav_notes);
     }
@@ -161,8 +161,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if(id==R.id.action_settings){
-            startActivity(new Intent(this,SettingsActivity.class));
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void handleShare() {
         View view = findViewById(R.id.list_items);// just get a reference to any view in our current activity
-        Snackbar.make(view, PreferenceManager.getDefaultSharedPreferences(this).getString("user_favorite_social",""), Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, PreferenceManager.getDefaultSharedPreferences(this).getString("user_favorite_social", ""), Snackbar.LENGTH_LONG).show();
     }
 
     private void handleSelection(int message_id) {
