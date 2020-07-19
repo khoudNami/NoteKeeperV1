@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void initializeDisplayContent() {
-
+        DataManager.loadFromDatabase(mDbOpenHelper);
         mRecyclerItems = findViewById(R.id.list_items);
 
         mNotesLayoutManager = new LinearLayoutManager(this);
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mRecyclerItems.setLayoutManager(mNotesLayoutManager);
         mRecyclerItems.setAdapter(mNoteRecyclerAdapter);
 
-        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase(); // gets reference to database, create it if it dont exist, can be expensive and long running.
+       // SQLiteDatabase db = mDbOpenHelper.getReadableDatabase(); // gets reference to database, create it if it dont exist, can be expensive and long running.
 
         selectNavigationMenuItem(R.id.nav_notes);
     }
