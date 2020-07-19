@@ -1,7 +1,8 @@
 package com.zacademy.notekeeperv1;
 
-import android.content.ContentUris;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,8 @@ import android.widget.Spinner;
 
 import java.util.List;
 
+import static com.zacademy.notekeeperv1.NoteKeeperDatabaseContract.*;
+
 public class NoteActivity extends AppCompatActivity {
 
     /************************************** Fields ************************************************/
@@ -33,6 +36,7 @@ public class NoteActivity extends AppCompatActivity {
     private int mNotePosition;
     private boolean mIsCancelling;
     private NoteActivityViewModel mViewModel;
+    private NoteKeeperOpenHelper mDbOpenHelper;
 
     /************************************** Overrided Methods *************************************/
 
@@ -42,6 +46,8 @@ public class NoteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_note);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mDbOpenHelper = new NoteKeeperOpenHelper(this);
 
         ViewModelProvider viewModelProvider = new ViewModelProvider(getViewModelStore(),
                 ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()));
@@ -74,9 +80,29 @@ public class NoteActivity extends AppCompatActivity {
 
         //use intent extra values capture by readDisplayState, to display the note;
         if (!mIsNewNote) {
-            displayNote(mSpinnerCourses, mTextNoteTitle, mTextNoteText);
+            loadNoteData();
         }
         Log.d(TAG, "NoteActivity onCreate() called");
+    }
+
+
+    private void loadNoteData() {
+        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
+
+        String courseId = "android_intents";
+        String titleStart = "dynamic";
+
+        String selection = NoteInfoEntry.COLUMN_COURSE_ID + " = ? AND " +
+                NoteInfoEntry.COLUMN_NOTE_TITLE + " LIKE ?";
+
+        String[] selectionArgs = {courseId, titleStart + "%"};
+
+        String[] noteColumns = {
+                NoteInfoEntry.COLUMN_NOTE_TITLE,
+                NoteInfoEntry.COLUMN_NOTE_TEXT,
+                NoteInfoEntry.COLUMN_COURSE_ID};
+        Cursor noteCursor = db.query(NoteInfoEntry.TABLE_NAME, noteColumns,
+                selection, selectionArgs, null, null, null);
     }
 
     @Override
@@ -123,6 +149,7 @@ public class NoteActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        mDbOpenHelper.close();
         super.onDestroy();
 //        Log.d("CALLED", "NoteActivity onDestroy() called");
     }
@@ -167,8 +194,8 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem item = menu.findItem(R.id.action_next);
-        int lastNoteIndex = DataManager.getInstance().getNotes().size()-1;
-        item.setEnabled(mNotePosition<lastNoteIndex);
+        int lastNoteIndex = DataManager.getInstance().getNotes().size() - 1;
+        item.setEnabled(mNotePosition < lastNoteIndex);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -187,16 +214,15 @@ public class NoteActivity extends AppCompatActivity {
 
     }
 
-    private void displayNote(Spinner spinnerCourses, EditText textNoteTitle, EditText textNoteText) {
+    private void displayNote() {
 
         List<CourseInfo> courses = DataManager.getInstance().getCourses();
         int courseIndex = courses.indexOf(mNote.getCourse()); // get the reference of the CourseInfo
         // object in this NoteInfo from intent.getParcelableExtra(NOTE_INFO). get the index of that
         // CourseInfo object in the courses List
-        spinnerCourses.setSelection(courseIndex); //use that index to set the current selection  in the spinnerCourses spinner
-
-        textNoteTitle.setText(mNote.getTitle());
-        textNoteText.setText(mNote.getText());
+        mSpinnerCourses.setSelection(courseIndex); //use that index to set the current selection  in the spinnerCourses spinner
+        mTextNoteTitle.setText(mNote.getTitle());
+        mTextNoteText.setText(mNote.getText());
     }
 
     private void sendEmail() {
@@ -243,7 +269,7 @@ public class NoteActivity extends AppCompatActivity {
         ++mNotePosition;
         mNote = DataManager.getInstance().getNotes().get(mNotePosition);
         saveOriginalNoteValues();
-        displayNote(mSpinnerCourses, mTextNoteTitle, mTextNoteText);
+        displayNote();
         invalidateOptionsMenu();
     }
 
