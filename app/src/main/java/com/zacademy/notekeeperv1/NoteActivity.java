@@ -23,8 +23,6 @@ import static com.zacademy.notekeeperv1.NoteKeeperDatabaseContract.*;
 
 public class NoteActivity extends AppCompatActivity {
 
-    /************************************** Fields ************************************************/
-
     private final String TAG = getClass().getSimpleName();
     public static final String NOTE_POSITION = "com.zacademy.notekeeperv1.NOTE_INFO_POSITION";
     public static final int POSITION_NOT_SET = -1;
@@ -37,8 +35,10 @@ public class NoteActivity extends AppCompatActivity {
     private boolean mIsCancelling;
     private NoteActivityViewModel mViewModel;
     private NoteKeeperOpenHelper mDbOpenHelper;
-
-    /************************************** Overrided Methods *************************************/
+    private Cursor mNoteCursor;
+    private int mCourseIdPos;
+    private int mNoteTitlePos;
+    private int mNoteTextPos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,8 +101,18 @@ public class NoteActivity extends AppCompatActivity {
                 NoteInfoEntry.COLUMN_NOTE_TITLE,
                 NoteInfoEntry.COLUMN_NOTE_TEXT,
                 NoteInfoEntry.COLUMN_COURSE_ID};
-        Cursor noteCursor = db.query(NoteInfoEntry.TABLE_NAME, noteColumns,
+
+        mNoteCursor = db.query(NoteInfoEntry.TABLE_NAME, noteColumns,
                 selection, selectionArgs, null, null, null);
+
+        mCourseIdPos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_COURSE_ID);
+        mNoteTitlePos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TITLE);
+        mNoteTextPos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TEXT);
+
+        mNoteCursor.moveToNext();
+
+        displayNote();
+
     }
 
     @Override
@@ -199,7 +209,6 @@ public class NoteActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
-    /************************************** User Defined Methods **********************************/
 
     private void readDisplayStateValues() {
         Intent intent = getIntent();
@@ -216,13 +225,16 @@ public class NoteActivity extends AppCompatActivity {
 
     private void displayNote() {
 
+        String courseId = mNoteCursor.getString(mCourseIdPos);
+        String noteTitle = mNoteCursor.getString(mNoteTitlePos);
+        String noteText = mNoteCursor.getString(mNoteTextPos);
+
         List<CourseInfo> courses = DataManager.getInstance().getCourses();
-        int courseIndex = courses.indexOf(mNote.getCourse()); // get the reference of the CourseInfo
-        // object in this NoteInfo from intent.getParcelableExtra(NOTE_INFO). get the index of that
-        // CourseInfo object in the courses List
-        mSpinnerCourses.setSelection(courseIndex); //use that index to set the current selection  in the spinnerCourses spinner
-        mTextNoteTitle.setText(mNote.getTitle());
-        mTextNoteText.setText(mNote.getText());
+        CourseInfo course = DataManager.getInstance().getCourse(courseId);
+        int courseIndex = courses.indexOf(course);
+        mSpinnerCourses.setSelection(courseIndex);
+        mTextNoteTitle.setText(noteTitle);
+        mTextNoteText.setText(noteText);
     }
 
     private void sendEmail() {
