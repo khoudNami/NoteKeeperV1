@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +27,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
+
         View itemView = mLayoutInflater.inflate(R.layout.item_note_list, parent, false);
 //        itemView.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -43,7 +43,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         NoteInfo note = mNotes.get(position);
         holder.mTextCourse.setText(note.getCourse().getTitle());
         holder.mTextTitle.setText(note.getTitle());
-        holder.mCurrentPosition = position;
+        holder.mId = note.getId();
 
 //        holder.itemView.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -83,7 +83,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
         public final TextView mTextCourse;
         public final TextView mTextTitle;
-        public int mCurrentPosition;
+        public int mId;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -94,7 +94,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, NoteActivity.class);
-                    intent.putExtra(NoteActivity.NOTE_POSITION, mCurrentPosition);
+                    intent.putExtra(NoteActivity.NOTE_ID, mId);
                     mContext.startActivity(intent);
 
                 }

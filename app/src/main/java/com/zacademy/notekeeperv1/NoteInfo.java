@@ -7,12 +7,20 @@ public final class NoteInfo implements Parcelable {
     private CourseInfo mCourse;// has mCourseId, course_mTitle, list of mModules in course
     private String mTitle;//Note title
     private String mText;//Note text
+    private int mId;
 
 
     public NoteInfo(CourseInfo course, String title, String text) {
         mCourse = course;
         mTitle = title;
         mText = text;
+    }
+
+    public NoteInfo(int id,CourseInfo course, String title, String text) {
+        mCourse = course;
+        mTitle = title;
+        mText = text;
+        mId = id;
     }
 
     public CourseInfo getCourse() {
@@ -78,7 +86,7 @@ public final class NoteInfo implements Parcelable {
         dest.writeString(mText);
     }
 
-    public static final Parcelable.Creator<NoteInfo> CREATOR = new Parcelable.Creator<NoteInfo>() {
+    public static final Creator<NoteInfo> CREATOR = new Creator<NoteInfo>() {
         @Override
         public NoteInfo createFromParcel(Parcel in) {
             return new NoteInfo(in);
@@ -96,4 +104,11 @@ public final class NoteInfo implements Parcelable {
         mText = in.readString();
     }
 
+    public int getId() {
+        return mId;
+    }
+
+    public void setId(int id) {
+        mId = id;
+    }
 }

@@ -12,6 +12,7 @@
         android:icon="@android:drawable/ic_media_next"
         android:orderInCategory="20"
         android:title="Next"
+        android:visible="false"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_cancel"
