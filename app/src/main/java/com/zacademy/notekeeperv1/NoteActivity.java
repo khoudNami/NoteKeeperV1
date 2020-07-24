@@ -59,6 +59,8 @@ public class NoteActivity extends AppCompatActivity
     private int mNoteTitlePos;
     private int mNoteTextPos;
     private SimpleCursorAdapter mAdapterCourses;
+    private boolean mCoursesQueryFinished;
+    private boolean mNotesQueryFinished;
 
 
     @Override
@@ -142,8 +144,11 @@ public class NoteActivity extends AppCompatActivity
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         if (loader.getId() == LOADER_NOTES)
             loadFinishedNotes(data);
-        else if (loader.getId() == LOADER_COURSES)
+        else if (loader.getId() == LOADER_COURSES) {
             mAdapterCourses.changeCursor(data);
+            mCoursesQueryFinished = true;
+            displayNoteWhenQueriesFinished();
+        }
     }
 
     @Override
@@ -246,6 +251,7 @@ public class NoteActivity extends AppCompatActivity
     }
 
     private CursorLoader createLoaderCourses() {
+        mCoursesQueryFinished = false;
         return new CursorLoader(this) {
             @Override
             public Cursor loadInBackground() {
@@ -262,6 +268,7 @@ public class NoteActivity extends AppCompatActivity
     }
 
     private CursorLoader createLoaderNotes() {
+        mNotesQueryFinished = false;
         return new CursorLoader(this) {
             @Override
             public Cursor loadInBackground() {
@@ -288,7 +295,13 @@ public class NoteActivity extends AppCompatActivity
         mNoteTitlePos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TITLE);
         mNoteTextPos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TEXT);
         mNoteCursor.moveToNext();
-        displayNote();
+        mNotesQueryFinished = true;
+        displayNoteWhenQueriesFinished();
+    }
+
+    private void displayNoteWhenQueriesFinished() {
+        if (mNotesQueryFinished && mCoursesQueryFinished)
+            displayNote();
     }
 
     private void loadNoteData() {
