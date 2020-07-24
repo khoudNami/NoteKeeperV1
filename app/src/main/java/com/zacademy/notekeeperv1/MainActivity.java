@@ -17,12 +17,16 @@ import com.google.android.material.navigation.NavigationView;
 import com.zacademy.notekeeperv1.NoteKeeperDatabaseContract.NoteInfoEntry;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 //import androidx.navigation.ui.AppBarConfiguration;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,8 +34,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final int LOADER_NOTES = 0;
     private NoteRecyclerAdapter mNoteRecyclerAdapter;
 
     //    private AppBarConfiguration mAppBarConfiguration;
@@ -83,90 +88,48 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onDestroy();
     }
 
-    private void initializeNavHeaderValues() {
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        View headerView = navigationView.getHeaderView(0);
-
-        TextView textUsername = headerView.findViewById(R.id.text_user_name);
-        TextView textEmailAddress = headerView.findViewById(R.id.text_email_address);
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        String userName = sharedPreferences.getString("user_display_name", "Defalt");
-        String emailAddress = sharedPreferences.getString("user_display_email", "Defalt2");
-
-        Toast.makeText(this, userName, Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, emailAddress, Toast.LENGTH_SHORT).show();
-
-        textUsername.setText(userName);
-        textEmailAddress.setText(emailAddress);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        loadNotes();
+        //loadNotes();
+        getSupportLoaderManager().restartLoader(LOADER_NOTES, null, this);
         updateNavHeader();
     }
 
-    private void loadNotes() {
-        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
-        String[] noteColumns = {
-                NoteInfoEntry.COLUMN_NOTE_TITLE,
-                NoteInfoEntry.COLUMN_COURSE_ID,
-                NoteInfoEntry._ID};
-        String noteOrderBy = NoteInfoEntry.COLUMN_COURSE_ID + "," + NoteInfoEntry.COLUMN_NOTE_TITLE;
-        Cursor noteCursor = db.query(NoteInfoEntry.TABLE_NAME, noteColumns,
-                null, null, null, null, noteOrderBy);
-        mNoteRecyclerAdapter.changeCursor(noteCursor);
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        CursorLoader loader = null;
+        if (id == LOADER_NOTES) {
+            loader = new CursorLoader(this) {
+                @Override
+                public Cursor loadInBackground() {
+                    SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
+                    String[] noteColumns = {
+                            NoteInfoEntry.COLUMN_NOTE_TITLE,
+                            NoteInfoEntry.COLUMN_COURSE_ID,
+                            NoteInfoEntry._ID};
+                    String noteOrderBy = NoteInfoEntry.COLUMN_COURSE_ID + "," + NoteInfoEntry.COLUMN_NOTE_TITLE;
+                    return db.query(NoteInfoEntry.TABLE_NAME, noteColumns,
+                            null, null, null, null, noteOrderBy);
+                }
+            };
+        }
+        return loader;
     }
 
-    private void updateNavHeader() {
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        View headerView = navigationView.getHeaderView(0);
-
-        TextView textUsername = headerView.findViewById(R.id.text_user_name);
-        TextView textEmailAddress = headerView.findViewById(R.id.text_email_address);
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        String userName = sharedPreferences.getString("user_display_name", "");
-        String emailAddress = sharedPreferences.getString("user_display_email", "");
-
-        textUsername.setText(userName);
-        textEmailAddress.setText(emailAddress);
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        if (loader.getId() == LOADER_NOTES) {
+            mNoteRecyclerAdapter.changeCursor(data);
+        }
     }
 
-    private void initializeDisplayContent() {
-        DataManager.loadFromDatabase(mDbOpenHelper);
-        mRecyclerItems = findViewById(R.id.list_items);
-
-        mNotesLayoutManager = new LinearLayoutManager(this);
-        mCoursesLayoutManager = new GridLayoutManager(this, getResources().getInteger(R.integer.course_grid_span));
-
-        mNoteRecyclerAdapter = new NoteRecyclerAdapter(this, null);
-
-        List<CourseInfo> courses = DataManager.getInstance().getCourses();
-        mCourseRecyclerAdapter = new CourseRecyclerAdapter(this, courses);
-
-        displayNotes();
-
-    }
-
-    private void displayNotes() {
-
-        mRecyclerItems.setLayoutManager(mNotesLayoutManager);
-        mRecyclerItems.setAdapter(mNoteRecyclerAdapter);
-
-        // SQLiteDatabase db = mDbOpenHelper.getReadableDatabase(); // gets reference to database, create it if it dont exist, can be expensive and long running.
-
-        selectNavigationMenuItem(R.id.nav_notes);
-    }
-
-    private void selectNavigationMenuItem(int id) {
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        Menu menu = navigationView.getMenu();
-        menu.findItem(id).setChecked(true);
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        if (loader.getId() == LOADER_NOTES) {
+            mNoteRecyclerAdapter.changeCursor(null);
+        }
     }
 
     @Override
@@ -176,13 +139,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(this, SettingsActivity.class));
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void displayCourses() {
-        mRecyclerItems.setLayoutManager(mCoursesLayoutManager);
-        mRecyclerItems.setAdapter(mCourseRecyclerAdapter);
-
-        selectNavigationMenuItem(R.id.nav_courses);
     }
 
     @Override
@@ -227,6 +183,92 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    private void initializeDisplayContent() {
+        DataManager.loadFromDatabase(mDbOpenHelper);
+        mRecyclerItems = findViewById(R.id.list_items);
+
+        mNotesLayoutManager = new LinearLayoutManager(this);
+        mCoursesLayoutManager = new GridLayoutManager(this, getResources().getInteger(R.integer.course_grid_span));
+
+        mNoteRecyclerAdapter = new NoteRecyclerAdapter(this, null);
+
+        List<CourseInfo> courses = DataManager.getInstance().getCourses();
+        mCourseRecyclerAdapter = new CourseRecyclerAdapter(this, courses);
+
+        displayNotes();
+
+    }
+
+    private void initializeNavHeaderValues() {
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+
+        TextView textUsername = headerView.findViewById(R.id.text_user_name);
+        TextView textEmailAddress = headerView.findViewById(R.id.text_email_address);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String userName = sharedPreferences.getString("user_display_name", "Defalt");
+        String emailAddress = sharedPreferences.getString("user_display_email", "Defalt2");
+
+        Toast.makeText(this, userName, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, emailAddress, Toast.LENGTH_SHORT).show();
+
+        textUsername.setText(userName);
+        textEmailAddress.setText(emailAddress);
+    }
+
+    private void loadNotes() {
+        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
+        String[] noteColumns = {
+                NoteInfoEntry.COLUMN_NOTE_TITLE,
+                NoteInfoEntry.COLUMN_COURSE_ID,
+                NoteInfoEntry._ID};
+        String noteOrderBy = NoteInfoEntry.COLUMN_COURSE_ID + "," + NoteInfoEntry.COLUMN_NOTE_TITLE;
+        Cursor noteCursor = db.query(NoteInfoEntry.TABLE_NAME, noteColumns,
+                null, null, null, null, noteOrderBy);
+        mNoteRecyclerAdapter.changeCursor(noteCursor);
+    }
+
+    private void displayNotes() {
+
+        mRecyclerItems.setLayoutManager(mNotesLayoutManager);
+        mRecyclerItems.setAdapter(mNoteRecyclerAdapter);
+
+        // SQLiteDatabase db = mDbOpenHelper.getReadableDatabase(); // gets reference to database, create it if it dont exist, can be expensive and long running.
+
+        selectNavigationMenuItem(R.id.nav_notes);
+    }
+
+    private void displayCourses() {
+        mRecyclerItems.setLayoutManager(mCoursesLayoutManager);
+        mRecyclerItems.setAdapter(mCourseRecyclerAdapter);
+
+        selectNavigationMenuItem(R.id.nav_courses);
+    }
+
+    private void updateNavHeader() {
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+
+        TextView textUsername = headerView.findViewById(R.id.text_user_name);
+        TextView textEmailAddress = headerView.findViewById(R.id.text_email_address);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String userName = sharedPreferences.getString("user_display_name", "");
+        String emailAddress = sharedPreferences.getString("user_display_email", "");
+
+        textUsername.setText(userName);
+        textEmailAddress.setText(emailAddress);
+    }
+
+    private void selectNavigationMenuItem(int id) {
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        Menu menu = navigationView.getMenu();
+        menu.findItem(id).setChecked(true);
+    }
+
     private void handleShare() {
         View view = findViewById(R.id.list_items);// just get a reference to any view in our current activity
         Snackbar.make(view, PreferenceManager.getDefaultSharedPreferences(this).getString("user_favorite_social", ""), Snackbar.LENGTH_LONG).show();
@@ -237,5 +279,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Snackbar.make(view, message_id, Snackbar.LENGTH_LONG).show();
 
     }
+
 
 }
