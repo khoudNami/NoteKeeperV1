@@ -118,6 +118,8 @@ public class NoteActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         mDbOpenHelper.close();
+        //if (mCursor != null)
+        //   mCursor.close();
         super.onDestroy();
     }
 
