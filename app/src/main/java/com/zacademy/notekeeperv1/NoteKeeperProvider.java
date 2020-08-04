@@ -90,9 +90,7 @@ public class NoteKeeperProvider extends ContentProvider {
 
         String[] columns = new String[projection.length];
         for (int idx = 0; idx < projection.length; idx++) {
-            columns[idx] = projection[idx].equals(BaseColumns._ID) ||
-                    projection[idx].equals(CoursesIdColumns.COLUMN_COURSE_ID) ?
-                    NoteInfoEntry.getQName(projection[idx]) : projection[idx];
+            columns[idx] = projection[idx].equals(BaseColumns._ID) || projection[idx].equals(CoursesIdColumns.COLUMN_COURSE_ID) ? NoteInfoEntry.getQName(projection[idx]) : projection[idx];
         }
 
         //note_info JOIN course_info ON note_info.course_id = course_info.course_id
