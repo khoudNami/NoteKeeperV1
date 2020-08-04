@@ -36,7 +36,7 @@
             android:name=".NoteKeeperProvider"
             android:authorities="com.zacademy.notekeeperv1.provider"
             android:enabled="true"
-            android:exported="false"></provider>
+            android:exported="true"></provider>
     </application>
 
 </manifest>

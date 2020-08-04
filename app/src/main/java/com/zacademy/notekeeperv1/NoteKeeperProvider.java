@@ -2,15 +2,28 @@ package com.zacademy.notekeeperv1;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 import com.zacademy.notekeeperv1.NoteKeeperDatabaseContract.CourseInfoEntry;
 
+import static com.zacademy.notekeeperv1.NoteKeeperDatabaseContract.*;
+
 public class NoteKeeperProvider extends ContentProvider {
 
     NoteKeeperOpenHelper mDbOpenHelper;
+    private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+    public static final int COURSES = 0;
+
+    public static final int NOTES = 1;
+
+    static { //static initializer runs some code when type is loaded
+        sUriMatcher.addURI(NoteKeeperProviderContract.AUTHORITY, NoteKeeperProviderContract.Courses.PATH, COURSES);
+        sUriMatcher.addURI(NoteKeeperProviderContract.AUTHORITY, NoteKeeperProviderContract.Notes.PATH, NOTES);
+    }
 
     public NoteKeeperProvider() {
     }
@@ -45,11 +58,23 @@ public class NoteKeeperProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        // TODO: Implement this to handle query requests from clients.
         Cursor cursor = null;
         SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
-        cursor = db.query(CourseInfoEntry.TABLE_NAME, projection, selection, selectionArgs,
-                null, null, sortOrder);
+
+        int uriMatch = sUriMatcher.match(uri);
+        switch (uriMatch) {
+            case COURSES:
+                cursor = db.query(CourseInfoEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+
+            case NOTES:
+                cursor = db.query(NoteInfoEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+        }
+
+
         return cursor;
     }
 
