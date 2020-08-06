@@ -1,9 +1,12 @@
 package com.zacademy.notekeeperv1;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +43,7 @@ import static com.zacademy.notekeeperv1.NoteKeeperProviderContract.*;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final int LOADER_NOTES = 0;
+    private static final String CHANNEL_ID = "channel_id";
     private NoteRecyclerAdapter mNoteRecyclerAdapter;
 
     //    private AppBarConfiguration mAppBarConfiguration;
@@ -95,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onResume() {
         super.onResume();
         //loadNotes();
+        createNotificationChannel();
         getSupportLoaderManager().restartLoader(LOADER_NOTES, null, this);
         updateNavHeader();
     }
@@ -285,6 +290,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         View view = findViewById(R.id.list_items);// just get a reference to any view in our current activity
         Snackbar.make(view, message_id, Snackbar.LENGTH_LONG).show();
 
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "NoteKeeper Channel";
+            String description = "Work Environment Alert";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
 

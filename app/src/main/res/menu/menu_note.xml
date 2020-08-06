@@ -20,4 +20,7 @@
         android:orderInCategory="10"
         android:title="Cancel"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_set_reminder"
+        android:title="Set Reminder" />
 </menu>

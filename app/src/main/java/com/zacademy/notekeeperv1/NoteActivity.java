@@ -195,6 +195,10 @@ public class NoteActivity extends AppCompatActivity
             moveNext();
         }
 
+        else if (id == R.id.action_set_reminder) {
+            showReminderNotification();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -380,6 +384,10 @@ public class NoteActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    private void showReminderNotification() {
+        String noteText = mTextNoteText.getText().toString();
+        NoteReminderNotificationV.notify(this,"Note Title", noteText,0);
+    }
 
 //    private void loadNoteData() {
 //
