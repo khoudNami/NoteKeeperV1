@@ -193,9 +193,7 @@ public class NoteActivity extends AppCompatActivity
             finish();
         } else if (id == R.id.action_next) {
             moveNext();
-        }
-
-        else if (id == R.id.action_set_reminder) {
+        } else if (id == R.id.action_set_reminder) {
             showReminderNotification();
         }
 
@@ -235,7 +233,7 @@ public class NoteActivity extends AppCompatActivity
     }
 
     private void deleteNoteFromDatabase() {
-            AsyncTask task = new AsyncTask() {
+        AsyncTask task = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
                 getContentResolver().delete(mNoteUri, null, null);
@@ -369,7 +367,7 @@ public class NoteActivity extends AppCompatActivity
         values.put(NoteInfoEntry.COLUMN_NOTE_TITLE, noteTitle);
         values.put(NoteInfoEntry.COLUMN_NOTE_TEXT, noteText);
 
-        getContentResolver().update(mNoteUri,values,null,null);
+        getContentResolver().update(mNoteUri, values, null, null);
     }
 
     private void sendEmail() {
@@ -385,8 +383,10 @@ public class NoteActivity extends AppCompatActivity
     }
 
     private void showReminderNotification() {
+        String noteTitle = mTextNoteTitle.getText().toString();
         String noteText = mTextNoteText.getText().toString();
-        NoteReminderNotificationV.notify(this,"Note Title", noteText,0);
+        int noteId = (int) ContentUris.parseId(mNoteUri);
+        NoteReminderNotificationV.notify(this, noteTitle, noteText, noteId);
     }
 
 //    private void loadNoteData() {

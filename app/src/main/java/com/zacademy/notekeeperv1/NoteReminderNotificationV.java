@@ -26,30 +26,36 @@ public class NoteReminderNotificationV {
         Intent noteActivityIntent = new Intent(context, NoteActivity.class);
         noteActivityIntent.putExtra(NoteActivity.NOTE_ID, noteId);
 
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"channel_id")
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "channel_id")
 
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setSmallIcon(R.drawable.ic_stat_note_reminder)
-                .setContentTitle("Review note")
+                .setContentTitle("Review note1")
                 .setContentText(noteText)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setLargeIcon(picture)
                 .setTicker("Review note")
+
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(noteText)
                         .setBigContentTitle(noteTitle)
-                        .setSummaryText("Review note"))
+                        .setSummaryText("Review note2"))
+
                 .setContentIntent(PendingIntent.getActivity(
                         context,
                         0,
                         noteActivityIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT))
 
-                .addAction(0, "View all notes", PendingIntent.getActivity(
+
+                .addAction(
+                0,
+                "View all notes",
+                PendingIntent.getActivity(
                         context,
                         0,
                         new Intent(context, MainActivity.class),
-                        PendingIntent.FLAG_UPDATE_CURRENT))
+                PendingIntent.FLAG_UPDATE_CURRENT))
 
                 .setAutoCancel(true);
 
