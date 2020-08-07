@@ -239,7 +239,7 @@ public class NoteActivity extends AppCompatActivity
 //        mNoteUri = getContentResolver().insert(Notes.CONTENT_URI, values); perfom this insert of empty record, on background thread
 
 
-        AsyncTask<ContentValues, Void, Uri> task = new AsyncTask<ContentValues, Void, Uri>() {
+        AsyncTask<ContentValues, Integer, Uri> task = new AsyncTask<ContentValues, Integer, Uri>() {
             private ProgressBar mProgressBar;
 
             @Override
@@ -256,11 +256,19 @@ public class NoteActivity extends AppCompatActivity
                 Uri rowUri = getContentResolver().insert(Notes.CONTENT_URI, insertValues);
 
                 simulateLongRunningWork();
-                mProgressBar.setProgress(2);
+                publishProgress(2);
+//                mProgressBar.setProgress(2); not the proper way to do it, use publish progress instead
                 simulateLongRunningWork();
-                mProgressBar.setProgress(3);
+                publishProgress(3);
+//                mProgressBar.setProgress(3); not the proper way to do it, use publish progress instead
 
                 return rowUri;
+            }
+
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                int progressValue = values[0];
+                mProgressBar.setProgress(progressValue);
             }
 
             @Override
