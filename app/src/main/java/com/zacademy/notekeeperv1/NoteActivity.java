@@ -21,11 +21,15 @@ import androidx.loader.content.Loader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -233,9 +237,11 @@ public class NoteActivity extends AppCompatActivity
 //        content provider operations should also be perfomed on non ui thread.
 //        mNoteUri = getContentResolver().insert(Notes.CONTENT_URI, values); perfom this insert of empty record, on background thread
 
+
         AsyncTask<ContentValues, Void, Uri> task = new AsyncTask<ContentValues, Void, Uri>() {
             @Override
             protected Uri doInBackground(ContentValues... contentValues) {
+                Log.d(TAG, "Call to doInBackground - thread: " + Thread.currentThread().getId());
                 ContentValues insertValues = contentValues[0];
                 Uri rowUri = getContentResolver().insert(Notes.CONTENT_URI, insertValues);
                 return rowUri;
@@ -243,10 +249,20 @@ public class NoteActivity extends AppCompatActivity
 
             @Override
             protected void onPostExecute(Uri uri) {
+                Log.d(TAG, "Call to onPostExecute - thread: " + Thread.currentThread().getId());
 //                super.onPostExecute(uri); no need to call this super method
                 mNoteUri = uri;
+                displaySnackbar(mNoteUri.toString());
             }
-        }.execute(values);
+        };
+
+        Log.d(TAG, "Call to execute - thread: " + Thread.currentThread().getId());
+        task.execute(values);
+    }
+
+    private void displaySnackbar(String message) {
+        View view = findViewById(R.id.spinner_courses);
+        Snackbar.make(view, message, Snackbar.LENGTH_LONG).show();
     }
 
     private void deleteNoteFromDatabase() {
