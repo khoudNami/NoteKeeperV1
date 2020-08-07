@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -239,6 +240,15 @@ public class NoteActivity extends AppCompatActivity
 
 
         AsyncTask<ContentValues, Void, Uri> task = new AsyncTask<ContentValues, Void, Uri>() {
+            private ProgressBar mProgressBar;
+
+            @Override
+            protected void onPreExecute() {
+                mProgressBar = findViewById(R.id.progress_bar);
+                mProgressBar.setVisibility(View.VISIBLE);
+                mProgressBar.setProgress(1);
+            }
+
             @Override
             protected Uri doInBackground(ContentValues... contentValues) {
                 Log.d(TAG, "Call to doInBackground - thread: " + Thread.currentThread().getId());
@@ -246,7 +256,9 @@ public class NoteActivity extends AppCompatActivity
                 Uri rowUri = getContentResolver().insert(Notes.CONTENT_URI, insertValues);
 
                 simulateLongRunningWork();
+                mProgressBar.setProgress(2);
                 simulateLongRunningWork();
+                mProgressBar.setProgress(3);
 
                 return rowUri;
             }
@@ -256,6 +268,7 @@ public class NoteActivity extends AppCompatActivity
                 Log.d(TAG, "Call to onPostExecute - thread: " + Thread.currentThread().getId());
 //                super.onPostExecute(uri); no need to call this super method
                 mNoteUri = uri;
+                mProgressBar.setVisibility(View.GONE);
                 displaySnackbar(mNoteUri.toString());
             }
         };
@@ -265,11 +278,11 @@ public class NoteActivity extends AppCompatActivity
     }
 
     private void simulateLongRunningWork() {
-            try {
-                Thread.sleep(2000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            Thread.sleep(2000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void displaySnackbar(String message) {
