@@ -244,6 +244,10 @@ public class NoteActivity extends AppCompatActivity
                 Log.d(TAG, "Call to doInBackground - thread: " + Thread.currentThread().getId());
                 ContentValues insertValues = contentValues[0];
                 Uri rowUri = getContentResolver().insert(Notes.CONTENT_URI, insertValues);
+
+                simulateLongRunningWork();
+                simulateLongRunningWork();
+
                 return rowUri;
             }
 
@@ -258,6 +262,14 @@ public class NoteActivity extends AppCompatActivity
 
         Log.d(TAG, "Call to execute - thread: " + Thread.currentThread().getId());
         task.execute(values);
+    }
+
+    private void simulateLongRunningWork() {
+            try {
+                Thread.sleep(2000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 
     private void displaySnackbar(String message) {
