@@ -76,6 +76,8 @@ public class NoteActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Log.d(TAG, "**********************onCreate*********************");
+
         mDbOpenHelper = new NoteKeeperOpenHelper(this);
 
         mSpinnerCourses = (Spinner) findViewById(R.id.spinner_courses);
@@ -118,7 +120,7 @@ public class NoteActivity extends AppCompatActivity
         } else {
             saveNote();
         }
-        Log.d(TAG, "onPause");
+        Log.d(TAG, "**********************onPause*******************");
     }
 
     @Override
@@ -222,14 +224,29 @@ public class NoteActivity extends AppCompatActivity
     }
 
     private void createNewNote() {
+
         ContentValues values = new ContentValues();
         values.put(Notes.COLUMN_COURSE_ID, "");
         values.put(Notes.COLUMN_NOTE_TITLE, "");
         values.put(Notes.COLUMN_NOTE_TEXT, "");
 
-        //content provider operations should also be perfomed on non ui thread.
-        mNoteUri = getContentResolver().insert(Notes.CONTENT_URI, values);
+//        content provider operations should also be perfomed on non ui thread.
+//        mNoteUri = getContentResolver().insert(Notes.CONTENT_URI, values); perfom this insert of empty record, on background thread
 
+        AsyncTask<ContentValues, Void, Uri> task = new AsyncTask<ContentValues, Void, Uri>() {
+            @Override
+            protected Uri doInBackground(ContentValues... contentValues) {
+                ContentValues insertValues = contentValues[0];
+                Uri rowUri = getContentResolver().insert(Notes.CONTENT_URI, insertValues);
+                return rowUri;
+            }
+
+            @Override
+            protected void onPostExecute(Uri uri) {
+//                super.onPostExecute(uri); no need to call this super method
+                mNoteUri = uri;
+            }
+        }.execute(values);
     }
 
     private void deleteNoteFromDatabase() {
@@ -389,301 +406,6 @@ public class NoteActivity extends AppCompatActivity
         NoteReminderNotificationV.notify(this, noteTitle, noteText, noteId);
     }
 
-//    private void loadNoteData() {
-//
-//        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
-//
-//        String courseId = "android_intents";
-//        String titleStart = "dynamic";
-//
-//        String selection = NoteInfoEntry._ID + " = ?";
-//
-//        String[] selectionArgs = {Integer.toString(mNoteId)};
-//
-//        String[] noteColumns = {
-//                NoteInfoEntry.COLUMN_COURSE_ID,
-//                NoteInfoEntry.COLUMN_NOTE_TITLE,
-//                NoteInfoEntry.COLUMN_NOTE_TEXT
-//        };
-//        mNoteCursor = db.query(NoteInfoEntry.TABLE_NAME, noteColumns,
-//                selection, selectionArgs, null, null, null);
-//        mCourseIdPos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_COURSE_ID);
-//        mNoteTitlePos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TITLE);
-//        mNoteTextPos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TEXT);
-//        mNoteCursor.moveToNext();
-//        displayNote();
-//    }
-//    private void loadCourseData() {
-//        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
-//        String[] courseColumns = {
-//                CourseInfoEntry.COLUMN_COURSE_TITLE,
-//                CourseInfoEntry.COLUMN_COURSE_ID,
-//                CourseInfoEntry._ID
-//        };
-//        Cursor cursor = db.query(CourseInfoEntry.TABLE_NAME, courseColumns,
-//                null, null, null, null, CourseInfoEntry.COLUMN_COURSE_TITLE);
-//        mAdapterCourses.changeCursor(cursor);
-//    }
 }
-
-
-//
-//    private final String TAG = getClass().getSimpleName();
-//    public static final String NOTE_ID = "com.zacademy.notekeeperv1.NOTE_INFO_POSITION";
-//    public static final int ID_NOT_SET = -1;
-//    private NoteInfo mNote;
-//    private boolean mIsNewNote;
-//    private Spinner mSpinnerCourses;
-//    private EditText mTextNoteTitle;
-//    private EditText mTextNoteText;
-//    private int mNoteId;
-//    private boolean mIsCancelling;
-//    private NoteActivityViewModel mViewModel;
-//    private NoteKeeperOpenHelper mDbOpenHelper;
-//    private Cursor mNoteCursor;
-//    private int mCourseIdPos;
-//    private int mNoteTitlePos;
-//    private int mNoteTextPos;
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_note);
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//
-//        mDbOpenHelper = new NoteKeeperOpenHelper(this);
-//
-//        ViewModelProvider viewModelProvider = new ViewModelProvider(getViewModelStore(),
-//                ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()));
-//
-//        mViewModel = viewModelProvider.get(NoteActivityViewModel.class);
-//
-//        if (mViewModel.mIsNewlyCreated && savedInstanceState != null) {
-//            mViewModel.restoreState(savedInstanceState);
-//        }
-//        mViewModel.mIsNewlyCreated = false;
-//
-//        mSpinnerCourses = findViewById(R.id.spinner_courses);
-//        List<CourseInfo> courses = DataManager.getInstance().getCourses();
-//
-//        //Create adapter to associate courses list with spinnerCourses Spinner.
-//        ArrayAdapter<CourseInfo> adapterCourses = new ArrayAdapter<>(this,
-//                android.R.layout.simple_spinner_item,
-//                courses);//list values read in by CourseInfo.toString()
-//        adapterCourses.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        mSpinnerCourses.setAdapter(adapterCourses);
-//
-//        //Receive Intent from NoteListActivity; extract its extra; use the extra(Parcelable, then later position) to display the selected note from NoteListActivity in NoteActivity
-//        readDisplayStateValues();
-//
-//        saveOriginalNoteValues();
-//
-//        mTextNoteTitle = findViewById(R.id.text_note_title);
-//        mTextNoteText = findViewById(R.id.text_note_text);
-//
-//
-//        //use intent extra values capture by readDisplayState, to display the note;
-//        if (!mIsNewNote) {
-//            loadNoteData();
-//        }
-//        Log.d(TAG, "NoteActivity onCreate() called");
-//    }
-//
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-////        Log.d("CALLED", "NoteActivity onStart() called");
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-////        Log.d("CALLED", "NoteActivity onResume() called");
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        if (mIsCancelling) {
-//            Log.i(TAG, "Cancelling note at position: " + mNoteId);
-//            if (mIsNewNote) {
-//                DataManager.getInstance().removeNote(mNoteId);
-//            } else {
-//                storePreviousNoteValues();
-//            }
-//
-//        } else {
-//            saveNote();
-//        }
-//
-//        Log.d(TAG, "NoteActivity onPause() called");
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-////        Log.d("CALLED", "NoteActivity onStop() called");
-//    }
-//
-//    @Override
-//    protected void onRestart() {
-//        super.onRestart();
-////        Log.d("CALLED", "NoteActivity onRestart() called");
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        mDbOpenHelper.close();
-//        super.onDestroy();
-////        Log.d("CALLED", "NoteActivity onDestroy() called");
-//    }
-//
-//    @Override
-//    protected void onSaveInstanceState(@NonNull Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//
-//        if (outState != null)
-//            mViewModel.saveState(outState);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_send_mail) {
-//            sendEmail();
-//            return true;
-//        } else if (id == R.id.action_cancel) {
-//            mIsCancelling = true;
-//            finish();
-//            return true;
-//        } else if (id == R.id.action_next) {
-//            moveNext();
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-//
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_note, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onPrepareOptionsMenu(Menu menu) {
-//        MenuItem item = menu.findItem(R.id.action_next);
-//        int lastNoteIndex = DataManager.getInstance().getNotes().size() - 1;
-//        item.setEnabled(mNoteId < lastNoteIndex);
-//        return super.onPrepareOptionsMenu(menu);
-//    }
-//
-//    private void readDisplayStateValues() {
-//        Intent intent = getIntent();
-//        mNoteId = intent.getIntExtra(NOTE_ID, ID_NOT_SET);
-//        mIsNewNote = mNoteId == ID_NOT_SET;
-//        if (mIsNewNote) {
-//            createNewNote();
-//        }
-//
-//        Log.i(TAG, "mNoteNewPosition: " + mNoteId);
-//        //mNote = DataManager.getInstance().getNotes().get(mNoteId);//make it member variable so that displayNotes() can also access it// List.get(position): Returns the element at the specified position in this list.
-//    }
-//
-//    private void loadNoteData() {
-//        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
-//
-//        String courseId = "android_intents";
-//        String titleStart = "dynamic";
-//
-//        String selection = NoteInfoEntry._ID + " = ?";
-//
-//        String[] selectionArgs = {Integer.toString(mNoteId)};
-//
-//        String[] noteColumns = {
-//                NoteInfoEntry.COLUMN_NOTE_TITLE,
-//                NoteInfoEntry.COLUMN_NOTE_TEXT,
-//                NoteInfoEntry.COLUMN_COURSE_ID};
-//
-//        mNoteCursor = db.query(NoteInfoEntry.TABLE_NAME, noteColumns,
-//                selection, selectionArgs, null, null, null);
-//
-//        mCourseIdPos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_COURSE_ID);
-//        mNoteTitlePos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TITLE);
-//        mNoteTextPos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TEXT);
-//
-//        mNoteCursor.moveToNext();
-//
-//        displayNote();
-//
-//    }
-//
-//    private void displayNote() {
-//
-//        String courseId = mNoteCursor.getString(mCourseIdPos);
-//        String noteTitle = mNoteCursor.getString(mNoteTitlePos);
-//        String noteText = mNoteCursor.getString(mNoteTextPos);
-//
-//        List<CourseInfo> courses = DataManager.getInstance().getCourses();
-//        CourseInfo course = DataManager.getInstance().getCourse(courseId);
-//        int courseIndex = courses.indexOf(course);
-//        mSpinnerCourses.setSelection(courseIndex);
-//        mTextNoteTitle.setText(noteTitle);
-//        mTextNoteText.setText(noteText);
-//    }
-//
-//    private void sendEmail() {
-//        CourseInfo course = (CourseInfo) mSpinnerCourses.getSelectedItem();
-//        String subject = mTextNoteTitle.getText().toString();
-//        String text = "Check out what I learned in the pluralsight \"" + course.getTitle() + "\"\n" + mTextNoteText.getText();
-//        Intent intent = new Intent(Intent.ACTION_SEND);
-//        intent.setType("message/rfc2822");
-//        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-//        intent.putExtra(Intent.EXTRA_TEXT, text);
-//        startActivity(intent);
-//    }
-//
-//    private void saveNote() { // set the values of the note we currently have reference to
-//        mNote.setCourse((CourseInfo) mSpinnerCourses.getSelectedItem());
-//        mNote.setTitle(mTextNoteTitle.getText().toString());
-//        mNote.setText(mTextNoteText.getText().toString());
-//    }
-//
-//    private void createNewNote() {
-//        DataManager dm = DataManager.getInstance();
-//        mNoteId = dm.createNewNote();
-////        mNote = dm.getNotes().get(mNewNotePosition);
-//    }
-//
-//    private void saveOriginalNoteValues() {
-//        if (mIsNewNote)
-//            return;
-//        mViewModel.mOriginalNoteCourseId = mNote.getCourse().getCourseId();
-//        mViewModel.mOriginalNoteTitle = mNote.getTitle();
-//        mViewModel.mOriginalNoteText = mNote.getText();
-//
-//    }
-//
-//    private void storePreviousNoteValues() {
-//        CourseInfo course = DataManager.getInstance().getCourse(mViewModel.mOriginalNoteCourseId);
-//        mNote.setCourse(course);
-//        mNote.setTitle(mViewModel.mOriginalNoteTitle);
-//        mNote.setText(mViewModel.mOriginalNoteText);
-//    }
-//
-//    private void moveNext() {
-//        saveNote();
-//        ++mNoteId;
-//        mNote = DataManager.getInstance().getNotes().get(mNoteId);
-//        saveOriginalNoteValues();
-//        displayNote();
-//        invalidateOptionsMenu();
-//    }
 
 
