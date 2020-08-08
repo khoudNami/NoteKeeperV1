@@ -36,7 +36,11 @@
             android:name=".NoteKeeperProvider"
             android:authorities="com.zacademy.notekeeperv1.provider"
             android:enabled="true"
-            android:exported="true"></provider>
+            android:exported="true" />
+
+        <service
+            android:name=".NoteBackupService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.nfc.tech.NfcB;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -123,19 +124,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         openDrawer();
     }
 
-    private void openDrawer() {
-        //
-
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                DrawerLayout drawer = findViewById(R.id.drawer_layout);
-                drawer.openDrawer(GravityCompat.START);
-            }
-        }, 1000);
-    }
-
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
@@ -181,6 +169,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
+        } else if (id == R.id.action_backup_notes) {
+            backupNotes();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -340,5 +330,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    private void openDrawer() {
+        //
+
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                drawer.openDrawer(GravityCompat.START);
+            }
+        }, 1000);
+    }
+
+    private void backupNotes() {
+        Intent intent = new Intent(this, NoteBackupService.class);
+        intent.putExtra(NoteBackupService.EXTRA_COURSE_ID, NoteBackup.ALL_COURSES);
+        startService(intent);
+        // NoteBackup.doBackup(MainActivity.this, NoteBackup.ALL_COURSES);
+    }
 
 }
