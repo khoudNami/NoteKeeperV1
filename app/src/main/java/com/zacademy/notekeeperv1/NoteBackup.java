@@ -23,9 +23,9 @@ public class NoteBackup {
 
         String selection = null;
         String[] selectionArgs = null;
-        if(!backupCourseId.equals(ALL_COURSES)) {
+        if (!backupCourseId.equals(ALL_COURSES)) {
             selection = Notes.COLUMN_COURSE_ID + " = ?";
-            selectionArgs = new String[] {backupCourseId};
+            selectionArgs = new String[]{backupCourseId};
         }
 
         Cursor cursor = context.getContentResolver().query(Notes.CONTENT_URI, columns, selection, selectionArgs, null);
@@ -34,13 +34,14 @@ public class NoteBackup {
         int noteTextPos = cursor.getColumnIndex(Notes.COLUMN_NOTE_TEXT);
 
         Log.i(TAG, ">>>***   BACKUP START - Thread: " + Thread.currentThread().getId() + "   ***<<<");
-        while(cursor.moveToNext()) {
+        while (cursor.moveToNext()) {
             String courseId = cursor.getString(courseIdPos);
             String noteTitle = cursor.getString(noteTitlePos);
             String noteText = cursor.getString(noteTextPos);
 
-            if(!noteTitle.equals("")) {
+            if (!noteTitle.equals("")) {
                 Log.i(TAG, ">>>Backing Up Note<<< " + courseId + "|" + noteTitle + "|" + noteText);
+                simulateLongRunningWork();
                 simulateLongRunningWork();
             }
         }
@@ -52,7 +53,8 @@ public class NoteBackup {
     private static void simulateLongRunningWork() {
         try {
             Thread.sleep(1000);
-        } catch(Exception ex) {}
+        } catch (Exception ex) {
+        }
     }
 
 }

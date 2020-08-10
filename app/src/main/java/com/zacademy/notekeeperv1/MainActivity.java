@@ -2,6 +2,9 @@ package com.zacademy.notekeeperv1;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -11,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PersistableBundle;
 import android.os.StrictMode;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -49,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public static final int LOADER_NOTES = 0;
     private static final String CHANNEL_ID = "channel_id";
+    public static final int NOTE_UPLOADER_JOB_ID = 1;
     private NoteRecyclerAdapter mNoteRecyclerAdapter;
 
     //    private AppBarConfiguration mAppBarConfiguration;
@@ -171,6 +176,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(this, SettingsActivity.class));
         } else if (id == R.id.action_backup_notes) {
             backupNotes();
+        } else if (id == R.id.action_upload_notes) {
+            scheduleNoteUpload();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -348,6 +355,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         intent.putExtra(NoteBackupService.EXTRA_COURSE_ID, NoteBackup.ALL_COURSES);
         startService(intent);
         // NoteBackup.doBackup(MainActivity.this, NoteBackup.ALL_COURSES);
+    }
+
+    private void scheduleNoteUpload() {
+        PersistableBundle extras = new PersistableBundle();
+        extras.putString(NoteUploaderJobService.EXTRA_DATA_URI, Notes.CONTENT_URI.toString());
+
+        ComponentName componentName = new ComponentName(this, NoteUploaderJobService.class);
+
+        JobInfo jobInfo = new JobInfo.Builder(NOTE_UPLOADER_JOB_ID, componentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setExtras(extras)
+                .build();
+
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(jobInfo);
+
+
     }
 
 }
