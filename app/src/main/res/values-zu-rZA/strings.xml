@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NoteKeeperV1</string>
+    <string name="note_title_hint">Isihloko</string>
+    <string name="note_text_hint">Umbhalo wakho</string>
+    <string name="title_activity_note">Edith iNote</string>
+</resources>

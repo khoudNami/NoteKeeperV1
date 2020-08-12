@@ -51,6 +51,7 @@ public class NoteActivity extends AppCompatActivity
     public static final String ORIGINAL_NOTE_COURSE_ID = "com.jwhh.jim.notekeeper.ORIGINAL_NOTE_COURSE_ID";
     public static final String ORIGINAL_NOTE_TITLE = "com.jwhh.jim.notekeeper.ORIGINAL_NOTE_TITLE";
     public static final String ORIGINAL_NOTE_TEXT = "com.jwhh.jim.notekeeper.ORIGINAL_NOTE_TEXT";
+    public static final String NOTE_URI = "com.jwhh.jim.notekeeper.NOTE_URI";
     public static final int ID_NOT_SET = -1;
 
     private Spinner mSpinnerCourses;
@@ -107,6 +108,8 @@ public class NoteActivity extends AppCompatActivity
             saveOriginalNoteValues();
         } else {
             restoreOriginalNoteValues(savedInstanceState);
+            String stringNoteUri = savedInstanceState.getString(NOTE_URI);
+            mNoteUri = Uri.parse(stringNoteUri);
         }
 
         if (!mIsNewNote)
@@ -145,6 +148,8 @@ public class NoteActivity extends AppCompatActivity
         outState.putString(ORIGINAL_NOTE_COURSE_ID, mOriginalNoteCourseId);
         outState.putString(ORIGINAL_NOTE_TITLE, mOriginalNoteTitle);
         outState.putString(ORIGINAL_NOTE_TEXT, mOriginalNoteText);
+
+        outState.putString(NOTE_URI, mNoteUri.toString());
     }
 
     @NonNull
