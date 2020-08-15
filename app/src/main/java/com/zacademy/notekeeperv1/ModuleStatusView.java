@@ -16,10 +16,7 @@ import android.view.View;
  */
 public class ModuleStatusView extends View {
     public static final int EDIT_MODE_MODULE_COUNT = 7;
-    private String mExampleString; // TODO: use a default from R.string...
-    private int mExampleColor = Color.RED; // TODO: use a default from R.color...
-    private float mExampleDimension = 0; // TODO: use a default from R.dimen...
-    private Drawable mExampleDrawable;
+
     private float mOutlineWidth;
     private float mShapeSize;
     private float mSpacing;
@@ -29,7 +26,66 @@ public class ModuleStatusView extends View {
     private int mFillColor;
     private Paint mPaintFill;
     private float mRadius;
+    private int mMaxHorizontalModules;
 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        for (int moduleIndex = 0; moduleIndex < mModuleRectangles.length; moduleIndex++) {
+            float x = mModuleRectangles[moduleIndex].centerX();
+            float y = mModuleRectangles[moduleIndex].centerY();
+
+            if (mModuleStatus[moduleIndex])
+                canvas.drawCircle(x, y, mRadius, mPaintFill);
+
+            canvas.drawCircle(x, y, mRadius, mPaintOutline);
+        }
+
+
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int desiredWidth = 0;
+        int desiredHeight = 0;
+
+        int specWidth = MeasureSpec.getSize(widthMeasureSpec);
+        int availableWidth = specWidth - getPaddingLeft() - getPaddingRight();
+        int horizontalModulesThatCanFit = (int) (availableWidth / (mShapeSize + mSpacing));
+        mMaxHorizontalModules = Math.min(horizontalModulesThatCanFit, mModuleStatus.length);
+
+        desiredWidth = (int) ((mMaxHorizontalModules * (mShapeSize + mSpacing)) - mSpacing);
+        desiredWidth += getPaddingLeft() + getPaddingRight();
+
+        int rows = ((mModuleStatus.length - 1) / mMaxHorizontalModules) + 1;
+        desiredHeight = (int) ((rows * (mShapeSize + mSpacing)) - mSpacing);
+        desiredHeight += getPaddingTop() + getPaddingBottom();
+
+        int width = resolveSizeAndState(desiredWidth, widthMeasureSpec, 0);
+        int height = resolveSizeAndState(desiredHeight, heightMeasureSpec, 0);
+
+        setMeasuredDimension(width, height);
+    }
+
+    private void setupModuleRectangles(int width) {
+        int availableWidth = width - getPaddingLeft() - getPaddingRight();
+        int horizontalModulesThatCanFit = (int) (availableWidth / (mShapeSize + mSpacing));
+        int maxHorizontalModules = Math.min(horizontalModulesThatCanFit, mModuleStatus.length);
+
+
+        mModuleRectangles = new Rect[mModuleStatus.length];
+        for (int moduleIndex = 0; moduleIndex < mModuleRectangles.length; moduleIndex++) {
+
+            int column = moduleIndex % mMaxHorizontalModules;
+            int row = moduleIndex / mMaxHorizontalModules;
+
+            int x = getPaddingLeft() + (int) (column * (mShapeSize + mSpacing));
+            int y = getPaddingTop() + (int) (row * (mShapeSize + mSpacing));
+            mModuleRectangles[moduleIndex] = new Rect(x, y, x + (int) mShapeSize, y + (int) mShapeSize);
+        }
+
+    }
 
     public boolean[] getModuleStatus() {
         return mModuleStatus;
@@ -72,8 +128,6 @@ public class ModuleStatusView extends View {
         mSpacing = 30f;
         mRadius = (mShapeSize - mOutlineWidth) / 2;
 
-        setupModuleRectangles(); // create the rectangles we are going to use to position each the circles when its time to draw them.
-
         mOutlineColor = Color.BLACK;
         mPaintOutline = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaintOutline.setStyle(Paint.Style.STROKE);
@@ -97,36 +151,8 @@ public class ModuleStatusView extends View {
         setModuleStatus(exampleModuleValues);
     }
 
-    private void setupModuleRectangles() {
-        //array to store the rectangles
-        mModuleRectangles = new Rect[mModuleStatus.length];
-        for (int moduleIndex = 0; moduleIndex < mModuleRectangles.length; moduleIndex++) { // loop to populate the array of rectangles
-            int x = (int) (moduleIndex * (mShapeSize + mSpacing)); // position of top left corner
-            int y = 0; // position of top edge is same and therefore can be set to just 0
-            mModuleRectangles[moduleIndex] = new Rect(x, y, x + (int) mShapeSize, y + (int) mShapeSize);
-        }
-
-    }
-
-    private void invalidateTextPaintAndMeasurements() {
-    }
-
     @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        for (int moduleIndex = 0; moduleIndex < mModuleRectangles.length; moduleIndex++) {
-            float x = mModuleRectangles[moduleIndex].centerX();
-            float y = mModuleRectangles[moduleIndex].centerY();
-
-            if (mModuleStatus[moduleIndex])
-                canvas.drawCircle(x, y, mRadius, mPaintFill);
-
-            canvas.drawCircle(x, y, mRadius, mPaintOutline);
-        }
-
-
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        setupModuleRectangles(w);
     }
-
-
 }

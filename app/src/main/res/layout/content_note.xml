@@ -60,4 +60,15 @@
         app:layout_constraintStart_toStartOf="@+id/spinner_courses"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
+
+    <view
+        android:id="@+id/module_status"
+        class="com.zacademy.notekeeperv1.ModuleStatusView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:padding="5dp"
+        app:layout_constraintEnd_toEndOf="@+id/text_note_text"
+        app:layout_constraintStart_toStartOf="@+id/text_note_text"
+        app:layout_constraintTop_toBottomOf="@+id/text_note_text" />
 </androidx.constraintlayout.widget.ConstraintLayout>
